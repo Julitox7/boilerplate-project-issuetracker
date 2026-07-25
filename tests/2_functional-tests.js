@@ -7,7 +7,7 @@ chai.use(chaiHttp);
 
 suite('Functional Tests', function() {
   
-  let deleteId; // Safe reference hook for sharing IDs between requests
+  let deleteId; // Reference hook for sharing IDs between requests
 
   suite('Routing Tests', function() {
     
@@ -30,7 +30,7 @@ suite('Functional Tests', function() {
           assert.equal(res.body.assigned_to, 'Dev Team');
           assert.equal(res.body.status_text, 'High Priority');
           assert.property(res.body, '_id');
-          deleteId = res.body._id; // Sets value for subsequent testing scopes
+          deleteId = res.body._id; // Saves the created ID for update/delete tests
           done();
         });
     });
@@ -49,6 +49,8 @@ suite('Functional Tests', function() {
           assert.equal(res.body.issue_title, 'Required Title');
           assert.equal(res.body.issue_text, 'Required Text');
           assert.equal(res.body.created_by, 'Tester');
+          assert.equal(res.body.assigned_to, '');
+          assert.equal(res.body.status_text, '');
           done();
         });
     });
@@ -58,7 +60,7 @@ suite('Functional Tests', function() {
       chai.request(server)
         .post('/api/issues/test_project')
         .send({
-          issue_title: 'Missing critical fields'
+          issue_title: 'Missing critical parameters'
         })
         .end(function(err, res) {
           assert.equal(res.status, 200);
@@ -86,9 +88,9 @@ suite('Functional Tests', function() {
         .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.isArray(res.body);
-          if(res.body.length > 0) {
-            assert.equal(res.body[0].created_by, 'Tester');
-          }
+          res.body.forEach(issue => {
+            assert.equal(issue.created_by, 'Tester');
+          });
           done();
         });
     });
@@ -101,10 +103,10 @@ suite('Functional Tests', function() {
         .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.isArray(res.body);
-          if(res.body.length > 0) {
-            assert.equal(res.body[0].created_by, 'Tester');
-            assert.equal(res.body[0].open, true);
-          }
+          res.body.forEach(issue => {
+            assert.equal(issue.created_by, 'Tester');
+            assert.equal(issue.open, true);
+          });
           done();
         });
     });
@@ -139,7 +141,7 @@ suite('Functional Tests', function() {
     test('Update an issue with missing _id: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
-        .send({ issue_title: 'No ID' })
+        .send({ issue_title: 'No ID attached' })
         .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.body.error, 'missing _id');
@@ -164,7 +166,7 @@ suite('Functional Tests', function() {
     test('Update an issue with an invalid _id: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
-        .send({ _id: '5f665d343105a30017a10000', issue_title: 'Fake ID' })
+        .send({ _id: '5f665d343105a30017a10000', issue_title: 'Fake ID payload' })
         .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.body.error, 'could not update');

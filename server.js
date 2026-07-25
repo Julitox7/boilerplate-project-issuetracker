@@ -1,13 +1,15 @@
 'use strict';
 
 const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']); // Stops home network connection drops
+dns.setServers(['8.8.8.8', '8.8.4.4']); // Bypasses home network lookup blocks
 
 require('dotenv').config();
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
 
+// 🟢 THE CORRECT OFFICIAL IMPORT: Points to the built-in testing asset wrapper
+const fccTesting  = require('./freeCodeCamp/fcctesting.js');
 const apiRoutes   = require('./routes/api.js');
 const runner      = require('./test-runner');
 
@@ -24,24 +26,8 @@ app.route('/').get(function (req, res) {
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
-// 🟢 REPLACED: Updated testing endpoint formatting configuration block
-app.get('/_api/get-tests', (req, res) => {
-  outFilter(runner.tests);
-  res.json(runner.tests);
-});
-
-function outFilter(tests) {
-  if (!tests) return;
-  tests.forEach(t => {
-    // Retain clean baseline context details for the FCC script to evaluate
-    t.title = t.title || 'Functional Test Verification Check';
-    t.context = t.context || 'Routing Tests';
-    t.state = t.state || 'passed';
-    if (t.state === 'failed') t.error = t.err.message || '' + t.err;
-    delete t.err;
-  });
-}
-
+// 🟢 CRITICAL: Activates the official testing hooks required for Test 11
+fccTesting(app);
 
 // Routing for API 
 apiRoutes(app);  
