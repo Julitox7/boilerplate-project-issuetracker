@@ -11,6 +11,7 @@ suite('Functional Tests', function() {
 
   suite('Routing Tests', function() {
     
+    // #1
     test('Create an issue with every field: POST request to /api/issues/{project}', function(done) {
       chai.request(server)
         .post('/api/issues/test_project')
@@ -34,6 +35,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #2
     test('Create an issue with only required fields: POST request to /api/issues/{project}', function(done) {
       chai.request(server)
         .post('/api/issues/test_project')
@@ -51,10 +53,13 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #3
     test('Create an issue with missing required fields: POST request to /api/issues/{project}', function(done) {
       chai.request(server)
         .post('/api/issues/test_project')
-        .send({ issue_title: 'Missing critical parameters' })
+        .send({
+          issue_title: 'Missing parameters'
+        })
         .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.body.error, 'required field(s) missing');
@@ -62,6 +67,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #4
     test('View issues on a project: GET request to /api/issues/{project}', function(done) {
       chai.request(server)
         .get('/api/issues/test_project')
@@ -72,6 +78,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #5
     test('View issues on a project with one filter: GET request to /api/issues/{project}', function(done) {
       chai.request(server)
         .get('/api/issues/test_project')
@@ -83,6 +90,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #6
     test('View issues on a project with multiple filters: GET request to /api/issues/{project}', function(done) {
       chai.request(server)
         .get('/api/issues/test_project')
@@ -94,6 +102,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #7
     test('Update one field on an issue: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
@@ -106,6 +115,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #8
     test('Update multiple fields on an issue: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
@@ -118,6 +128,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #9
     test('Update an issue with missing _id: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
@@ -129,6 +140,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #10
     test('Update an issue with no fields to update: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
@@ -141,6 +153,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #11
     test('Update an issue with an invalid _id: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
@@ -153,6 +166,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #12
     test('Delete an issue: DELETE request to /api/issues/{project}', function(done) {
       chai.request(server)
         .delete('/api/issues/test_project')
@@ -165,6 +179,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #13
     test('Delete an issue with an invalid _id: DELETE request to /api/issues/{project}', function(done) {
       chai.request(server)
         .delete('/api/issues/test_project')
@@ -177,6 +192,7 @@ suite('Functional Tests', function() {
         });
     });
 
+    // #14
     test('Delete an issue with missing _id: DELETE request to /api/issues/{project}', function(done) {
       chai.request(server)
         .delete('/api/issues/test_project')
