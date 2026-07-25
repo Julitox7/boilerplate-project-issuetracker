@@ -58,7 +58,7 @@ suite('Functional Tests', function() {
       chai.request(server)
         .post('/api/issues/test_project')
         .send({
-          issue_title: 'Missing critical fields'
+          issue_title: 'Missing critical parameters'
         })
         .end(function(err, res) {
           assert.equal(res.status, 200);
@@ -132,7 +132,7 @@ suite('Functional Tests', function() {
     test('Update an issue with missing _id: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
-        .send({ issue_title: 'No ID' })
+        .send({ issue_title: 'No ID attached' })
         .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.body.error, 'missing _id');
@@ -157,7 +157,7 @@ suite('Functional Tests', function() {
     test('Update an issue with an invalid _id: PUT request to /api/issues/{project}', function(done) {
       chai.request(server)
         .put('/api/issues/test_project')
-        .send({ _id: '5f665d343105a30017a10000', issue_title: 'Fake ID' })
+        .send({ _id: '5f665d343105a30017a10000', issue_title: 'Fake ID payload' })
         .end(function(err, res) {
           assert.equal(res.status, 200);
           assert.equal(res.body.error, 'could not update');
