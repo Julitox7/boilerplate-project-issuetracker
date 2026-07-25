@@ -1,14 +1,10 @@
 'use strict';
 
-const dns = require('dns');
-dns.setServers(['8.8.8.8', '8.8.4.4']); // Bypasses home network lookup blocks
-
 require('dotenv').config();
 const express     = require('express');
 const bodyParser  = require('body-parser');
 const cors        = require('cors');
 
-// 🟢 THE CORRECT OFFICIAL IMPORT: Points to the built-in testing asset wrapper
 const fccTesting  = require('./freeCodeCamp/fcctesting.js');
 const apiRoutes   = require('./routes/api.js');
 const runner      = require('./test-runner');
@@ -16,30 +12,37 @@ const runner      = require('./test-runner');
 const app = express();
 
 app.use('/public', express.static(process.cwd() + '/public'));
-app.use(cors({origin: '*'})); // For FCC testing purposes
+app.use(cors({origin: '*'})); //For FCC testing purposes
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Index page (static HTML)
-app.route('/').get(function (req, res) {
-  res.sendFile(process.cwd() + '/views/index.html');
-});
+//Sample front-end
+app.route('/:project/')
+  .get(function (req, res) {
+    res.sendFile(process.cwd() + '/views/issue.html');
+  });
 
-// 🟢 CRITICAL: Activates the official testing hooks required for Test 11
+//Index page (static HTML)
+app.route('/')
+  .get(function (req, res) {
+    res.sendFile(process.cwd() + '/views/index.html');
+  });
+
+//For FCC testing purposes
 fccTesting(app);
 
-// Routing for API 
+//Routing for API 
 apiRoutes(app);  
     
-// 404 Not Found Middleware
+//404 Not Found Middleware
 app.use(function(req, res, next) {
   res.status(404)
     .type('text')
     .send('Not Found');
 });
 
-// Instantly open the server listener port
+//Start our server and tests!
 const port = process.env.PORT || 3000;
 app.listen(port, function () {
   console.log("Listening on port " + port);
@@ -56,4 +59,4 @@ app.listen(port, function () {
   }
 });
 
-module.exports = app; // For testing
+module.exports = app; //for testing
